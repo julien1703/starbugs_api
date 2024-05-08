@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  frontend:
+    image: ghcr.io/caitoor/starbugs_frontend:latest
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.${FRONTEND_SUBDOMAIN}.rule=Host(`${FRONTEND_SUBDOMAIN}.${DOMAIN}`)"
+        - "traefik.http.routers.${FRONTEND_SUBDOMAIN}.entrypoints=https"
+        - "traefik.http.routers.${FRONTEND_SUBDOMAIN}.tls=true"
+        - "traefik.http.routers.${FRONTEND_SUBDOMAIN}.tls.certresolver=cf"
+        - "traefik.http.services.${FRONTEND_SUBDOMAIN}.loadbalancer.server.port=80"
+        - "traefik.http.services.${FRONTEND_SUBDOMAIN}.loadbalancer.server.scheme=http"
+    networks:
+      - proxy
+
+  backend:
+    image: ghcr.io/caitoor/starbugs_api:latest
+    environment:
+      - API_PORT=${API_PORT}
+      - FRONTEND_URL=https://${FRONTEND_SUBDOMAIN}.${DOMAIN}
+      - MONGO_COLLECTION=${MONGO_COLLECTION}
+      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@starbugs_mongo:27017/${MONGO_DB}?authSource=admin
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.${BACKEND_SUBDOMAIN}.rule=Host(`${BACKEND_SUBDOMAIN}.${DOMAIN}`)"
+        - "traefik.http.routers.${BACKEND_SUBDOMAIN}.entrypoints=https"
+        - "traefik.http.routers.${BACKEND_SUBDOMAIN}.tls=true"
+        - "traefik.http.routers.${BACKEND_SUBDOMAIN}.tls.certresolver=cf"
+        - "traefik.http.services.${BACKEND_SUBDOMAIN}.loadbalancer.server.port=${API_PORT}"
+        - "traefik.http.services.${BACKEND_SUBDOMAIN}.loadbalancer.server.scheme=http"
+
+    networks:
+      - proxy
+      - starbugs_network
+
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    deploy:
+      replicas: 1
+      update_config:
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+    ports:
+      - 27027:27017
+    networks:
+      - proxy
+      - starbugs_network
+
+networks:
+  proxy:
+    external: true
+  starbugs_network:
+    
+volumes:
+  mongo_data:

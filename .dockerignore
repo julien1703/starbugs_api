@@ -1,0 +1,7 @@
+node_modules
+.env
+.env.example
+readme.md
+.github
+docker-compose.yml
+.gitignore
