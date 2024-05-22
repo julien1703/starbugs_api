@@ -19,7 +19,7 @@ const starSchema = new mongoose.Schema({
     mag: Number,
 });
 
-const Star = mongoose.model(mongoCollection, starSchema, mongoCollection);
+const Star = mongoose.model('star', starSchema, mongoCollection);
 console.log("connecting to " + mongoUri);
 mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connection successful'))
@@ -29,7 +29,8 @@ const corsOptions = {
     origin: frontendUrl,
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 app.get('/constellation', async (req, res) => {
