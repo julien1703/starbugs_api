@@ -37,14 +37,25 @@ app.get('/constellation', async (req, res) => {
     const { constellation } = req.query;
     console.log(`calling /constellation for: ${constellation}`);
     try {
-        const stars = await Star.find({
-            con: { $regex: constellation, $options: 'i' },
-            $or: [
-                { bay: { $nin: [null, ''] } },
-                { flam: { $nin: [null, ''] } },
-                { proper: { $nin: [null, ''] } }
-            ]
-        }).sort({ mag: 1 });
+        let stars;
+        if (constellation) {
+            stars = await Star.find({
+                con: { $regex: constellation, $options: 'i' },
+                $or: [
+                    { bay: { $nin: [null, ''] } },
+                    { flam: { $nin: [null, ''] } },
+                    { proper: { $nin: [null, ''] } }
+                ]
+            }).sort({ mag: 1 });
+        } else {
+            stars = await Star.find({
+                $or: [
+                    { bay: { $nin: [null, ''] } },
+                    { flam: { $nin: [null, ''] } },
+                    { proper: { $nin: [null, ''] } }
+                ]
+            }).sort({ mag: 1 });
+        }
         res.json(stars);
         console.log(`Found stars: ${stars.length}`);
     } catch (error) {
@@ -52,6 +63,7 @@ app.get('/constellation', async (req, res) => {
         res.status(500).json({ message: 'internal server error' });
     }
 });
+
 
 app.get('/', (req, res) => {
     // console.log("calling root endpoint");
