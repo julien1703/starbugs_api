@@ -23,14 +23,16 @@ const Star = mongoose.model('star', starSchema, mongoCollection);
 console.log("connecting to " + mongoUri);
 mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connection successful'))
-    .catch(err => console.error('MongoDB connection error:', err));
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        process.exit(1); // Beende den Prozess, wenn die Verbindung fehlschlägt
+    });
 
 const corsOptions = {
     origin: frontendUrl,
 };
 
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/constellation', async (req, res) => {
@@ -60,13 +62,11 @@ app.get('/constellation', async (req, res) => {
         console.log(`Found stars: ${stars.length}`);
     } catch (error) {
         console.error('Error fetching star data:', error);
-        res.status(500).json({ message: 'internal server error' });
+        res.status(500).json({ message: 'internal server error', error: error.message });
     }
 });
 
-
 app.get('/', (req, res) => {
-    // console.log("calling root endpoint");
     res.send('Welcome to the Starbugs API!');
 });
 
