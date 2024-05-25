@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 
-const port = process.env.API_PORT | 3000;
+const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 
 // .envs created in docker-compose.yml:
@@ -21,7 +21,6 @@ const starSchema = new mongoose.Schema({
     y: Number,
     z: Number
 });
-
 
 const Star = mongoose.model('star', starSchema, mongoCollection);
 console.log("connecting to " + mongoUri);
@@ -49,8 +48,18 @@ app.get('/constellation', async (req, res) => {
                 { proper: { $nin: [null, ''] } }
             ]
         }).sort({ mag: 1 });
-        res.json(stars);
-        console.log(`Found stars: ${stars.length}`);
+
+        // Überprüfe, ob Koordinaten fehlen
+        const validStars = stars.filter(star => !isNaN(star.x) && !isNaN(star.y) && !isNaN(star.z));
+        const invalidStars = stars.filter(star => isNaN(star.x) || isNaN(star.y) || isNaN(star.z));
+
+        console.log(`Valid stars found: ${validStars.length}`);
+        console.log(`Invalid stars found: ${invalidStars.length}`);
+        if (invalidStars.length > 0) {
+            console.warn('Invalid star data:', invalidStars);
+        }
+
+        res.json(validStars);
     } catch (error) {
         console.error('Error fetching star data:', error);
         res.status(500).json({ message: 'internal server error' });
