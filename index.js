@@ -17,11 +17,7 @@ const starSchema = new mongoose.Schema({
     bay: String,
     flam: Number,
     mag: Number,
-    x: Number,
-    y: Number,
-    z: Number
 });
-
 
 const Star = mongoose.model('star', starSchema, mongoCollection);
 console.log("connecting to " + mongoUri);
