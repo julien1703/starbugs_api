@@ -6,10 +6,8 @@ const cors = require('cors');
 
 const port = process.env.API_PORT | 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
-
-// .envs created in docker-compose.yml:
-const mongoUri = process.env.MONGO_URI; 
-const frontendUrl = process.env.FRONTEND_URL;
+const mongoUri = process.env.MONGO_URI;
+const frontendUrl = `${process.env.FRONTEND_URL}`;
 
 const starSchema = new mongoose.Schema({
     proper: String,

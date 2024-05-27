@@ -25,9 +25,9 @@ services:
     image: ghcr.io/caitoor/starbugs_api:latest
     environment:
       - API_PORT=${API_PORT}
-      - FRONTEND_URL=https://${FRONTEND_SUBDOMAIN}.${DOMAIN}
+      - FRONTEND_URL=${FRONTEND_URL}
       - MONGO_COLLECTION=${MONGO_COLLECTION}
-      - MONGO_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@starbugs_mongo:27017/${MONGO_DB}?authSource=admin
+      - MONGO_URI=${MONGO_URI}
     deploy:
       replicas: 1
       update_config:
