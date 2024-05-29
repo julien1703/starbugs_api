@@ -17,9 +17,14 @@ const starSchema = new mongoose.Schema({
     bay: String,
     flam: Number,
     mag: Number,
+    x: Number,
+    y: Number,
+    z: Number,
+    color: String,
 });
 
 const Star = mongoose.model('star', starSchema, mongoCollection);
+
 console.log("connecting to " + mongoUri);
 mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connection successful'))
@@ -37,14 +42,11 @@ app.get('/constellation', async (req, res) => {
     const { constellation } = req.query;
     console.log(`calling /constellation for: ${constellation}`);
     try {
-        const stars = await Star.find({
-            con: { $regex: constellation, $options: 'i' },
-            $or: [
-                { bay: { $nin: [null, ''] } },
-                { flam: { $nin: [null, ''] } },
-                { proper: { $nin: [null, ''] } }
-            ]
-        }).sort({ mag: 1 });
+        const query = constellation ? {
+            con: { $regex: constellation, $options: 'i' }
+        } : {};
+        
+        const stars = await Star.find(query).sort({ mag: 1 });
         res.json(stars);
         console.log(`Found stars: ${stars.length}`);
     } catch (error) {
@@ -52,6 +54,7 @@ app.get('/constellation', async (req, res) => {
         res.status(500).json({ message: 'internal server error' });
     }
 });
+
 
 app.get('/', (req, res) => {
     // console.log("calling root endpoint");
