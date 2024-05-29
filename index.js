@@ -47,13 +47,38 @@ app.get('/constellation', async (req, res) => {
         } : {};
         
         const stars = await Star.find(query).sort({ mag: 1 });
-        res.json(stars);
+
+        // Adding code to create connections between stars in a constellation
+        let connections = [];
+        if (constellation) {
+            // This is where you'd define the connections, based on your constellation data
+            // Example: connections = [{from: 'Star1', to: 'Star2'}, ...]
+            connections = getConstellationConnections(constellation, stars);
+        }
+
+        res.json({ stars, connections });
         console.log(`Found stars: ${stars.length}`);
     } catch (error) {
         console.error('Error fetching star data:', error);
         res.status(500).json({ message: 'internal server error' });
     }
 });
+
+function getConstellationConnections(constellation, stars) {
+    // Example function to define connections based on constellation
+    // This should be replaced with your actual logic/data
+    let connections = [];
+    if (constellation.toLowerCase() === 'leo') {
+        // Add connections for the Leo constellation
+        connections = [
+            // Assuming you have star names or IDs to connect
+            { from: 'Regulus', to: 'Denebola' },
+            // ... other connections
+        ];
+    }
+    return connections;
+}
+
 
 
 app.get('/', (req, res) => {
