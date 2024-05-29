@@ -17,9 +17,11 @@ const starSchema = new mongoose.Schema({
     bay: String,
     flam: Number,
     mag: Number,
-    x: Number,
-    y: Number,
-    z: Number,
+    ra: Number,
+    dec: Number,
+    x0: Number,
+    y0: Number,
+    z0: Number,
     color: String,
 });
 
@@ -34,7 +36,6 @@ const corsOptions = {
     origin: frontendUrl,
 };
 
-// app.use(cors(corsOptions));
 app.use(cors());
 app.use(express.json());
 
@@ -48,7 +49,6 @@ app.get('/constellation', async (req, res) => {
         
         const stars = await Star.find(query).sort({ mag: 1 });
 
-        // Adding code to create connections between stars in a constellation
         let connections = [];
         if (constellation) {
             connections = getConstellationConnections(constellation, stars);
@@ -70,6 +70,19 @@ function getConstellationConnections(constellation, stars) {
     }, {});
 
     switch (constellation.toLowerCase()) {
+        case 'ari':
+            connections.push({ from: 'Hamal', to: 'Sheratan' });
+            connections.push({ from: 'Sheratan', to: 'Mesarthim' });
+            break;
+        case 'tau':
+            connections.push({ from: 'Aldebaran', to: 'Elnath' });
+            break;
+        case 'gem':
+            connections.push({ from: 'Castor', to: 'Pollux' });
+            break;
+        case 'cnc':
+            connections.push({ from: 'Acubens', to: 'Altarf' });
+            break;
         case 'leo':
             connections.push({ from: 'Regulus', to: 'Denebola' });
             connections.push({ from: 'Denebola', to: 'Zosma' });
@@ -78,12 +91,11 @@ function getConstellationConnections(constellation, stars) {
             connections.push({ from: 'Adhafera', to: 'Algenubi' });
             connections.push({ from: 'Algenubi', to: 'Chort' });
             break;
-        case 'ori':
-            connections.push({ from: 'Betelgeuse', to: 'Bellatrix' });
-            connections.push({ from: 'Bellatrix', to: 'Alnilam' });
-            connections.push({ from: 'Alnilam', to: 'Mintaka' });
-            connections.push({ from: 'Mintaka', to: 'Saiph' });
-            connections.push({ from: 'Saiph', to: 'Rigel' });
+        case 'vir':
+            connections.push({ from: 'Spica', to: 'Vindemiatrix' });
+            break;
+        case 'lib':
+            connections.push({ from: 'Zubenelgenubi', to: 'Zubeneschamali' });
             break;
         case 'sco':
             connections.push({ from: 'Antares', to: 'Shaula' });
@@ -91,13 +103,32 @@ function getConstellationConnections(constellation, stars) {
             connections.push({ from: 'Sargas', to: 'Dschubba' });
             connections.push({ from: 'Dschubba', to: 'Alniyat' });
             break;
+        case 'sgr':
+            connections.push({ from: 'Kaus Australis', to: 'Nunki' });
+            break;
+        case 'cap':
+            connections.push({ from: 'Deneb Algedi', to: 'Dabih' });
+            break;
+        case 'aqr':
+            connections.push({ from: 'Sadalmelik', to: 'Sadalsuud' });
+            break;
+        case 'psc':
+            connections.push({ from: 'Alrescha', to: 'Eta Piscium' });
+            break;
+        case 'ori':
+            connections.push({ from: 'Betelgeuse', to: 'Bellatrix' });
+            connections.push({ from: 'Bellatrix', to: 'Alnilam' });
+            connections.push({ from: 'Alnilam', to: 'Mintaka' });
+            connections.push({ from: 'Mintaka', to: 'Saiph' });
+            connections.push({ from: 'Saiph', to: 'Rigel' });
+            break;
         case 'lyr':
             connections.push({ from: 'Vega', to: 'Sheliak' });
             connections.push({ from: 'Sheliak', to: 'Sulafat' });
             connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
-        // Add cases for other constellations here
+        // Add other constellations here
         default:
             break;
     }
@@ -106,7 +137,6 @@ function getConstellationConnections(constellation, stars) {
 }
 
 app.get('/', (req, res) => {
-    // console.log("calling root endpoint");
     res.send('Welcome to the Starbugs API!');
 });
 
