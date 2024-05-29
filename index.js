@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 
-const port = process.env.API_PORT | 3000;
+const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 
 // .envs created in docker-compose.yml:
@@ -51,8 +51,6 @@ app.get('/constellation', async (req, res) => {
         // Adding code to create connections between stars in a constellation
         let connections = [];
         if (constellation) {
-            // This is where you'd define the connections, based on your constellation data
-            // Example: connections = [{from: 'Star1', to: 'Star2'}, ...]
             connections = getConstellationConnections(constellation, stars);
         }
 
@@ -65,21 +63,47 @@ app.get('/constellation', async (req, res) => {
 });
 
 function getConstellationConnections(constellation, stars) {
-    // Example function to define connections based on constellation
-    // This should be replaced with your actual logic/data
-    let connections = [];
-    if (constellation.toLowerCase() === 'leo') {
-        // Add connections for the Leo constellation
-        connections = [
-            // Assuming you have star names or IDs to connect
-            { from: 'Regulus', to: 'Denebola' },
-            // ... other connections
-        ];
+    const connections = [];
+    const starsMap = stars.reduce((map, star) => {
+        map[star.proper] = star;
+        return map;
+    }, {});
+
+    switch (constellation.toLowerCase()) {
+        case 'leo':
+            connections.push({ from: 'Regulus', to: 'Denebola' });
+            connections.push({ from: 'Denebola', to: 'Zosma' });
+            connections.push({ from: 'Zosma', to: 'Algieba' });
+            connections.push({ from: 'Algieba', to: 'Adhafera' });
+            connections.push({ from: 'Adhafera', to: 'Algenubi' });
+            connections.push({ from: 'Algenubi', to: 'Chort' });
+            break;
+        case 'ori':
+            connections.push({ from: 'Betelgeuse', to: 'Bellatrix' });
+            connections.push({ from: 'Bellatrix', to: 'Alnilam' });
+            connections.push({ from: 'Alnilam', to: 'Mintaka' });
+            connections.push({ from: 'Mintaka', to: 'Saiph' });
+            connections.push({ from: 'Saiph', to: 'Rigel' });
+            break;
+        case 'sco':
+            connections.push({ from: 'Antares', to: 'Shaula' });
+            connections.push({ from: 'Shaula', to: 'Sargas' });
+            connections.push({ from: 'Sargas', to: 'Dschubba' });
+            connections.push({ from: 'Dschubba', to: 'Alniyat' });
+            break;
+        case 'lyr':
+            connections.push({ from: 'Vega', to: 'Sheliak' });
+            connections.push({ from: 'Sheliak', to: 'Sulafat' });
+            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
+            connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
+            break;
+        // Add cases for other constellations here
+        default:
+            break;
     }
-    return connections;
+
+    return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
-
-
 
 app.get('/', (req, res) => {
     // console.log("calling root endpoint");
