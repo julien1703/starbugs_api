@@ -37,30 +37,30 @@ app.use(express.json());
 
 app.get('/constellation', async (req, res) => {
     const { constellation } = req.query;
+    console.log(`calling /constellation for: ${constellation}`);
     try {
         const query = constellation ? {
             con: { $regex: constellation, $options: 'i' }
         } : {};
         
         const stars = await Star.find(query).sort({ mag: 1 });
-        let connections = [];
 
+        let connections = [];
         if (constellation) {
-            connections = getConstellationConnections(constellation, stars);
+            connections = getConstellationConnections(constellation);
         }
 
         res.json({ stars, connections });
+        console.log(`Found stars: ${stars.length}`);
     } catch (error) {
         console.error('Error fetching star data:', error);
         res.status(500).json({ message: 'internal server error' });
     }
 });
 
-function getConstellationConnections(constellation, stars) {
+function getConstellationConnections(constellation) {
     let connections = [];
-    constellation = constellation.toLowerCase();
-    
-    switch (constellation) {
+    switch (constellation.toLowerCase()) {
         case 'aries':
             connections = [
                 { from: 'Hamal', to: 'Sheratan' },
@@ -69,8 +69,7 @@ function getConstellationConnections(constellation, stars) {
             break;
         case 'taurus':
             connections = [
-                { from: 'Aldebaran', to: 'Elnath' },
-                // Add more connections if necessary
+                { from: 'Aldebaran', to: 'Elnath' }
             ];
             break;
         case 'gemini':
@@ -131,8 +130,10 @@ function getConstellationConnections(constellation, stars) {
                 { from: 'Alrescha', to: 'Fumalsamakah' }
             ];
             break;
+        default:
+            console.log(`No constellation data found for: ${constellation}`);
+            break;
     }
-    
     return connections;
 }
 
