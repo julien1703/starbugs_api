@@ -4,11 +4,10 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 
-const port = process.env.API_PORT | 3000;
+const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 
-// .envs created in docker-compose.yml:
-const mongoUri = process.env.MONGO_URI; 
+const mongoUri = process.env.MONGO_URI;
 const frontendUrl = process.env.FRONTEND_URL;
 
 const starSchema = new mongoose.Schema({
@@ -25,7 +24,6 @@ const starSchema = new mongoose.Schema({
 
 const Star = mongoose.model('star', starSchema, mongoCollection);
 
-console.log("connecting to " + mongoUri);
 mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connection successful'))
     .catch(err => console.error('MongoDB connection error:', err));
@@ -34,30 +32,24 @@ const corsOptions = {
     origin: frontendUrl,
 };
 
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/constellation', async (req, res) => {
     const { constellation } = req.query;
-    console.log(`calling /constellation for: ${constellation}`);
     try {
         const query = constellation ? {
             con: { $regex: constellation, $options: 'i' }
         } : {};
         
         const stars = await Star.find(query).sort({ mag: 1 });
-
-        // Adding code to create connections between stars in a constellation
         let connections = [];
+
         if (constellation) {
-            // This is where you'd define the connections, based on your constellation data
-            // Example: connections = [{from: 'Star1', to: 'Star2'}, ...]
             connections = getConstellationConnections(constellation, stars);
         }
 
         res.json({ stars, connections });
-        console.log(`Found stars: ${stars.length}`);
     } catch (error) {
         console.error('Error fetching star data:', error);
         res.status(500).json({ message: 'internal server error' });
@@ -65,24 +57,86 @@ app.get('/constellation', async (req, res) => {
 });
 
 function getConstellationConnections(constellation, stars) {
-    // Example function to define connections based on constellation
-    // This should be replaced with your actual logic/data
     let connections = [];
-    if (constellation.toLowerCase() === 'leo') {
-        // Add connections for the Leo constellation
-        connections = [
-            // Assuming you have star names or IDs to connect
-            { from: 'Regulus', to: 'Denebola' },
-            // ... other connections
-        ];
+    constellation = constellation.toLowerCase();
+    
+    switch (constellation) {
+        case 'aries':
+            connections = [
+                { from: 'Hamal', to: 'Sheratan' },
+                { from: 'Sheratan', to: 'Mesarthim' }
+            ];
+            break;
+        case 'taurus':
+            connections = [
+                { from: 'Aldebaran', to: 'Elnath' },
+                // Add more connections if necessary
+            ];
+            break;
+        case 'gemini':
+            connections = [
+                { from: 'Castor', to: 'Pollux' },
+                { from: 'Pollux', to: 'Alhena' },
+                { from: 'Alhena', to: 'Wasat' }
+            ];
+            break;
+        case 'cancer':
+            connections = [
+                { from: 'Acubens', to: 'Altarf' }
+            ];
+            break;
+        case 'leo':
+            connections = [
+                { from: 'Regulus', to: 'Denebola' },
+                { from: 'Denebola', to: 'Algieba' },
+                { from: 'Algieba', to: 'Zosma' }
+            ];
+            break;
+        case 'virgo':
+            connections = [
+                { from: 'Spica', to: 'Zavijava' },
+                { from: 'Zavijava', to: 'Porrima' }
+            ];
+            break;
+        case 'libra':
+            connections = [
+                { from: 'Zubenelgenubi', to: 'Zubeneschamali' }
+            ];
+            break;
+        case 'scorpio':
+            connections = [
+                { from: 'Antares', to: 'Shaula' },
+                { from: 'Shaula', to: 'Sargas' }
+            ];
+            break;
+        case 'sagittarius':
+            connections = [
+                { from: 'Kaus Australis', to: 'Nunki' },
+                { from: 'Nunki', to: 'Ascella' }
+            ];
+            break;
+        case 'capricorn':
+            connections = [
+                { from: 'Deneb Algedi', to: 'Dabih' }
+            ];
+            break;
+        case 'aquarius':
+            connections = [
+                { from: 'Sadalmelik', to: 'Sadalsuud' },
+                { from: 'Sadalsuud', to: 'Skat' }
+            ];
+            break;
+        case 'pisces':
+            connections = [
+                { from: 'Alrescha', to: 'Fumalsamakah' }
+            ];
+            break;
     }
+    
     return connections;
 }
 
-
-
 app.get('/', (req, res) => {
-    // console.log("calling root endpoint");
     res.send('Welcome to the Starbugs API!');
 });
 
