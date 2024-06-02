@@ -6,8 +6,6 @@ const cors = require('cors');
 
 const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
-
-// .envs created in docker-compose.yml:
 const mongoUri = process.env.MONGO_URI; 
 const frontendUrl = process.env.FRONTEND_URL;
 
@@ -43,10 +41,7 @@ app.get('/constellation', async (req, res) => {
     const { constellation } = req.query;
     console.log(`calling /constellation for: ${constellation}`);
     try {
-        const query = constellation ? {
-            con: { $regex: constellation, $options: 'i' }
-        } : {};
-        
+        const query = constellation ? { con: { $regex: constellation, $options: 'i' } } : {};
         const stars = await Star.find(query).sort({ mag: 1 });
 
         let connections = [];
