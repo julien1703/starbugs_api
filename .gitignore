@@ -1,3 +1,4 @@
 node_modules
-.env.production
 private_notes.md
+.env
+.env
