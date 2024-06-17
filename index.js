@@ -123,7 +123,8 @@ function getConstellationConnections(constellation, stars) {
             connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
-        // Add other constellations here
+        // Add other constellations here yesssss
+
         default:
             break;
     }
