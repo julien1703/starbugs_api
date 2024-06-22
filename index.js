@@ -134,8 +134,7 @@ function getConstellationConnections(constellation, stars) {
 }
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the Starbugs API! update');
-    console.log( {openAiKey});
+    res.send(`Welcome to the Starbugs API! update ${openAiKey}.`);
 });
 
 app.listen(port, () => {
