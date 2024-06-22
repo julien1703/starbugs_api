@@ -8,6 +8,7 @@ const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 const mongoUri = process.env.MONGO_URI; 
 const frontendUrl = process.env.FRONTEND_URL;
+const openAiKey = process.env.OPEN_AI_API_KEY;
 
 const starSchema = new mongoose.Schema({
     proper: String,
@@ -134,6 +135,7 @@ function getConstellationConnections(constellation, stars) {
 
 app.get('/', (req, res) => {
     res.send('Welcome to the Starbugs API!');
+    console.log( {openAiKey});
 });
 
 app.listen(port, () => {
