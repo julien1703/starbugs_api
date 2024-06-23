@@ -165,7 +165,7 @@ app.post('/api/generate-text', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send(`Welcome to the Starbugs API!`);
+    res.send(`Welcome to the Starbugs API! neu`);
 });
 
 app.listen(port, () => {
