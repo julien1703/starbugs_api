@@ -136,7 +136,7 @@ function getConstellationConnections(constellation, stars) {
 
 // Endpunkt zum Abrufen des API-Schlüssels
 app.get('/get-api-key', (req, res) => {
-    res.json({ apiKey: openAiKey });
+    res.json({ apiKey: OpenAiKey });
 });
 
 // Endpunkt zum Generieren von Text basierend auf dem Sternzeichen
