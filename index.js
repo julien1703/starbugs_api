@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const axios = require('axios'); // Hier axios importieren
 const app = express();
 const cors = require('cors');
 
@@ -121,7 +122,7 @@ function getConstellationConnections(constellation, stars) {
         case 'lyr':
             connections.push({ from: 'Vega', to: 'Sheliak' });
             connections.push({ from: 'Sheliak', to: 'Sulafat' });
-            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
+            connections.push({ from: 'Sulafat', to 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
         // Add other constellations here yesssss
@@ -137,9 +138,34 @@ app.get('/get-api-key', (req, res) => {
     res.json({ apiKey: openAiKey });
 });
 
+// Endpunkt zum Generieren von Text basierend auf dem Sternzeichen
+app.post('/api/generate-text', async (req, res) => {
+    const { starsign } = req.body;
+
+    try {
+        const response = await axios.post(
+            'https://api.openai.com/v1/engines/davinci-codex/completions',
+            {
+                prompt: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
+                max_tokens: 100,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${openAiKey}`,
+                },
+            }
+        );
+
+        res.json({ text: response.data.choices[0].text.trim() });
+    } catch (error) {
+        console.error('Fehler beim Generieren des Textes:', error);
+        res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
+    }
+});
 
 app.get('/', (req, res) => {
-    res.send(`Welcome to the Starbugs API! update ${openAiKey}.`);
+    res.send(`Welcome to the Starbugs API!`);
 });
 
 app.listen(port, () => {
