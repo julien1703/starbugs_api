@@ -166,7 +166,7 @@ app.post('/api/generate-text', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send(`Welcome to the Starbugs API! OpenAI API Key: ${OpenAiKey}`);
+    res.send(`Welcome to the Starbugs API! haaallo ${OpenAiKey}`);
 });
 
 app.listen(port, () => {
