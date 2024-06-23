@@ -133,6 +133,11 @@ function getConstellationConnections(constellation, stars) {
     return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
 
+app.get('/get-api-key', (req, res) => {
+    res.json({ apiKey: openAiKey });
+});
+
+
 app.get('/', (req, res) => {
     res.send(`Welcome to the Starbugs API! update ${openAiKey}.`);
 });
