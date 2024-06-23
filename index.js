@@ -153,7 +153,7 @@ app.post('/api/generate-text', async (req, res) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${openAiKey}`,
+                    'Authorization': `Bearer ${OpenAiKey}`,
                 },
             }
         );
@@ -166,7 +166,7 @@ app.post('/api/generate-text', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send(`Welcome to the Starbugs API! haaallo ${OpenAiKey}`);
+    res.send(`Welcome to the Starbugs API! jetzt aber richtig!`);
 });
 
 app.listen(port, () => {
