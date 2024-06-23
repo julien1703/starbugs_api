@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const axios = require('axios');
 const app = express();
 const cors = require('cors');
 
@@ -8,6 +9,7 @@ const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 const mongoUri = process.env.MONGO_URI; 
 const frontendUrl = process.env.FRONTEND_URL;
+const openAiKey = process.env.OPEN_AI_API_KEY;
 
 const starSchema = new mongoose.Schema({
     proper: String,
@@ -120,7 +122,7 @@ function getConstellationConnections(constellation, stars) {
         case 'lyr':
             connections.push({ from: 'Vega', to: 'Sheliak' });
             connections.push({ from: 'Sheliak', to: 'Sulafat' });
-            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
+            connections.push({ from: 'Sulafat', to 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
         // Add other constellations here yesssss
@@ -132,8 +134,39 @@ function getConstellationConnections(constellation, stars) {
     return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
 
+// Endpunkt zum Abrufen des API-Schlüssels
+app.get('/get-api-key', (req, res) => {
+    res.json({ apiKey: openAiKey });
+});
+
+// Endpunkt zum Generieren von Text basierend auf dem Sternzeichen
+app.post('/api/generate-text', async (req, res) => {
+    const { starsign } = req.body;
+
+    try {
+        const response = await axios.post(
+            'https://api.openai.com/v1/engines/davinci-codex/completions',
+            {
+                prompt: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
+                max_tokens: 100,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${openAiKey}`,
+                },
+            }
+        );
+
+        res.json({ text: response.data.choices[0].text.trim() });
+    } catch (error) {
+        console.error('Fehler beim Generieren des Textes:', error);
+        res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
+    }
+});
+
 app.get('/', (req, res) => {
-    res.send('Welcome to the Starbugs API!');
+    res.send(`Welcome to the Starbugs API!neu ${openAiKey} `);
 });
 
 app.listen(port, () => {
