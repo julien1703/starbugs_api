@@ -4,12 +4,17 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 const app = express();
 const cors = require('cors');
+const openai = require('openai');
 
 const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 const mongoUri = process.env.MONGO_URI; 
 const frontendUrl = process.env.FRONTEND_URL;
 const OpenAiKey = process.env.OPEN_AI_API_KEY;
+
+const openaiClient = new openai.OpenAI({
+    apiKey: OpenAiKey,
+});
 
 const starSchema = new mongoose.Schema({
     proper: String,
@@ -144,20 +149,16 @@ app.post('/api/generate-text', async (req, res) => {
     const { starsign } = req.body;
 
     try {
-        const response = await axios.post(
-            'https://api.openai.com/v1/engines/davinci-codex/completions',
-            {
-                prompt: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
-                max_tokens: 100,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OpenAiKey}`,
+        const response = await openaiClient.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages: [
+                {
+                    role: 'system',
+                    content: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
                 },
-            }
-        );
-
+            ],
+            max_tokens: 100,
+        });
         res.json({ text: response.data.choices[0].text.trim() });
     } catch (error) {
         console.error('Fehler beim Generieren des Textes:', error);
