@@ -159,7 +159,7 @@ app.post('/api/generate-text', async (req, res) => {
             ],
             max_tokens: 100,
         });
-        res.json({ text: response.data.choices[0].text.trim() });
+        res.json({ text: response.choices[0].message.content });
     } catch (error) {
         console.error('Fehler beim Generieren des Textes:', error);
         res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
