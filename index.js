@@ -154,10 +154,10 @@ app.post('/api/generate-text', async (req, res) => {
             messages: [
                 {
                     role: 'system',
-                    content: `Erzähle einem Kind etwas über die Geschichten welche man sich über das Sternzeichen ${starsign} in der Antike erzählt hatte als man in den Sternhimmel geschaut hat.`,
+                    content: `Erzähle einem Kind in 80 Wörtern etwas über die Geschichten welche man sich über das Sternzeichen ${starsign} in der Antike erzählt hatte als man in den Sternhimmel geschaut hat.`,
                 },
             ],
-            max_tokens: 100,
+            max_tokens: 200,
         });
         res.json({ text: response.choices[0].message.content });
     } catch (error) {
