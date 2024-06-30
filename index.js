@@ -81,10 +81,10 @@ app.post('/api/generate-text', async (req, res) => {
             messages: [
                 {
                     role: 'system',
-                    content: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
+                    content: `Gib mir eine spezifische und detaillierte Beschreibung für das Sternzeichen ${starsign}. Die Beschreibung soll folgende Informationen enthalten: Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, woher der Name kommt und weitere interessante Fakten.`,
                 },
             ],
-            max_tokens: 100,
+            max_tokens: 1000,
         });
         res.json({ text: response.choices[0].message.content });
     } catch (error) {
