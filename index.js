@@ -64,7 +64,80 @@ app.get('/constellation', async (req, res) => {
     }
 });
 
+function getConstellationConnections(constellation, stars) {
+    const connections = [];
+    const starsMap = stars.reduce((map, star) => {
+        map[star.proper] = star;
+        return map;
+    }, {});
 
+    switch (constellation.toLowerCase()) {
+        case 'ari':
+            connections.push({ from: 'Hamal', to: 'Sheratan' });
+            connections.push({ from: 'Sheratan', to: 'Mesarthim' });
+            break;
+        case 'tau':
+            connections.push({ from: 'Aldebaran', to: 'Elnath' });
+            break;
+        case 'gem':
+            connections.push({ from: 'Castor', to: 'Pollux' });
+            break;
+        case 'cnc':
+            connections.push({ from: 'Acubens', to: 'Altarf' });
+            break;
+        case 'leo':
+            connections.push({ from: 'Regulus', to: 'Denebola' });
+            connections.push({ from: 'Denebola', to: 'Zosma' });
+            connections.push({ from: 'Zosma', to: 'Algieba' });
+            connections.push({ from: 'Algieba', to: 'Adhafera' });
+            connections.push({ from: 'Adhafera', to: 'Algenubi' });
+            connections.push({ from: 'Algenubi', to: 'Chort' });
+            break;
+        case 'vir':
+            connections.push({ from: 'Spica', to: 'Vindemiatrix' });
+            break;
+        case 'lib':
+            connections.push({ from: 'Zubenelgenubi', to: 'Zubeneschamali' });
+            break;
+        case 'sco':
+            connections.push({ from: 'Antares', to: 'Shaula' });
+            connections.push({ from: 'Shaula', to: 'Sargas' });
+            connections.push({ from: 'Sargas', to: 'Dschubba' });
+            connections.push({ from: 'Dschubba', to: 'Alniyat' });
+            break;
+        case 'sgr':
+            connections.push({ from: 'Kaus Australis', to: 'Nunki' });
+            break;
+        case 'cap':
+            connections.push({ from: 'Deneb Algedi', to: 'Dabih' });
+            break;
+        case 'aqr':
+            connections.push({ from: 'Sadalmelik', to: 'Sadalsuud' });
+            break;
+        case 'psc':
+            connections.push({ from: 'Alrescha', to: 'Eta Piscium' });
+            break;
+        case 'ori':
+            connections.push({ from: 'Betelgeuse', to: 'Bellatrix' });
+            connections.push({ from: 'Bellatrix', to: 'Alnilam' });
+            connections.push({ from: 'Alnilam', to: 'Mintaka' });
+            connections.push({ from: 'Mintaka', to: 'Saiph' });
+            connections.push({ from: 'Saiph', to: 'Rigel' });
+            break;
+        case 'lyr':
+            connections.push({ from: 'Vega', to: 'Sheliak' });
+            connections.push({ from: 'Sheliak', to: 'Sulafat' });
+            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
+            connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
+            break;
+        // Add other constellations here
+
+        default:
+            break;
+    }
+
+    return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
+}
 
 // Endpunkt zum Abrufen des API-Schlüssels
 app.get('/get-api-key', (req, res) => {
