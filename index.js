@@ -154,10 +154,10 @@ app.post('/api/generate-text', async (req, res) => {
             messages: [
                 {
                     role: 'system',
-                    content: `Gib mir eine spezifische und detaillierte Beschreibung für das Sternzeichen ${starsign}. Die Beschreibung soll folgende Informationen enthalten: Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, woher der Name kommt und weitere interessante Fakten.`,
+                content: `Gib mir eine spezifische und detaillierte Beschreibung in 100 wörtern für das Sternzeichen ${starsign}. Die Beschreibung soll die themen behandeln Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, die Histeroische Hintergründe und Entdeckungsgeschichten, woher der Name kommt `,
                 },
             ],
-            max_tokens: 100,
+            max_tokens: 400,
         });
         res.json({ text: response.choices[0].message.content });
     } catch (error) {
