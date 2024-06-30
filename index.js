@@ -150,14 +150,14 @@ app.post('/api/generate-text', async (req, res) => {
 
     try {
         const response = await openaiClient.chat.completions.create({
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4o',
             messages: [
                 {
                     role: 'system',
-                    content: `Gib mir eine spezifische und detaillierte Beschreibung für das Sternzeichen ${starsign}. Die Beschreibung soll folgende Informationen enthalten: Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, woher der Name kommt und weitere interessante Fakten.`,
+                    content: `Gib mir eine spezifische Beschreibung für das Sternzeichen ${starsign}.`,
                 },
             ],
-            max_tokens: 1000,
+            max_tokens: 100,
         });
         res.json({ text: response.choices[0].message.content });
     } catch (error) {
