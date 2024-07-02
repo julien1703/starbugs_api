@@ -121,7 +121,7 @@ function getConstellationConnections(constellation, stars) {
         case 'lyr':
             connections.push({ from: 'Vega', to: 'Sheliak' });
             connections.push({ from: 'Sheliak', to: 'Sulafat' });
-            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
+            connections.push({ from: 'Sulafat', to 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
         default:
@@ -157,7 +157,7 @@ app.post('/api/generate-text-stream', async (req, res) => {
             for (const line of lines) {
                 const message = JSON.parse(line);
                 if (message.choices && message.choices[0].delta && message.choices[0].delta.content) {
-                    res.write(message.choices[0].delta.content);
+                    res.write(`data: ${message.choices[0].delta.content}\n\n`);
                 }
             }
         });
