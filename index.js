@@ -161,6 +161,26 @@ app.post('/api/generate-text', async (req, res) => {
     }
 });
 
+app.post('/api/chat', async (req, res) => {
+    const { message } = req.body;
+
+    try {
+        const response = await openaiClient.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                { role: 'system', content: 'You are an expert on constellations.' },
+                { role: 'user', content: message }
+            ],
+            max_tokens: 150,
+        });
+        res.json({ response: response.choices[0].message.content });
+    } catch (error) {
+        console.error('Error during OpenAI request:', error);
+        res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
+    }
+});
+
+
 app.get('/', (req, res) => {
     res.send(`Welcome to the Starbugs API! jetzt aber richtig!`);
 });
