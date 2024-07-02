@@ -131,7 +131,7 @@ function getConstellationConnections(constellation, stars) {
     return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
 
-app.post('/api/generate-text-stream', async (req, res) => {
+app.post('/api/generate-text', async (req, res) => {
     const { starsign } = req.body;
 
     res.setHeader('Content-Type', 'text/event-stream');
