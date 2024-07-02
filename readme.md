@@ -15,14 +15,17 @@ Folgen Sie diesen Schritten, um die API lokal zu installieren und auszuführen:
 
 1. Klonen Sie das Repository:
    ```bash
-   git clone https://github.com/julien1703/starbugs_api.git
+    git clone https://github.com/julien1703/starbugs_api.git
 2. Wechseln Sie in das Projektverzeichnis:
-    cd starbugs_api
+   ```bash
+   cd starbugs_api
 3. Installieren Sie die Abhängigkeiten:
-    npm install
-4. Erstellen Sie eine .env-Datei basierend auf dem .env.example-Template und fügen Sie die erforderlichen Konfigurationswerte hinzu.
-5. Starten Sie die Anwendung:
-    node index.js
+   ```bash
+   npm install
+5. Erstellen Sie eine .env-Datei basierend auf dem .env.example-Template und fügen Sie die erforderlichen Konfigurationswerte hinzu.
+6. Starten Sie die Anwendung:
+   ```bash
+   node index.js
 
 ## API-Endpunkte
 - GET /api/constellations: Liefert eine Liste aller Sternzeichen und ihrer Konstellationen.
