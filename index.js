@@ -166,9 +166,9 @@ app.post('/api/chat', async (req, res) => {
 
     try {
         const response = await openaiClient.chat.completions.create({
-            model: 'gpt-4',
+            model: 'gpt-4o',
             messages: [
-                { role: 'system', content: `You are an expert on the constellation ${starsign}.`},
+                { role: 'system', content: `You are an expert on the constellation.`},
                 { role: 'user', content: message }
             ],
             max_tokens: 150,
