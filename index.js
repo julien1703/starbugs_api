@@ -1,19 +1,20 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const { Configuration, OpenAIApi } = require('openai');
-
+const axios = require('axios');
 const app = express();
+const cors = require('cors');
+const openai = require('openai');
+
 const port = process.env.API_PORT || 3000;
 const mongoCollection = process.env.MONGO_COLLECTION;
 const mongoUri = process.env.MONGO_URI; 
 const frontendUrl = process.env.FRONTEND_URL;
-const openAiKey = process.env.OPEN_AI_API_KEY;
+const OpenAiKey = process.env.OPEN_AI_API_KEY;
 
-const openaiClient = new OpenAIApi(new Configuration({
-    apiKey: openAiKey,
-}));
+const openaiClient = new openai.OpenAI({
+    apiKey: OpenAiKey,
+});
 
 const starSchema = new mongoose.Schema({
     proper: String,
@@ -31,11 +32,16 @@ const starSchema = new mongoose.Schema({
 
 const Star = mongoose.model('star', starSchema, mongoCollection);
 
+console.log("connecting to " + mongoUri);
 mongoose.connect(mongoUri)
     .then(() => console.log('MongoDB connection successful'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-app.use(cors({ origin: frontendUrl }));
+const corsOptions = {
+    origin: frontendUrl,
+};
+
+app.use(cors());
 app.use(express.json());
 
 app.get('/constellation', async (req, res) => {
@@ -124,6 +130,8 @@ function getConstellationConnections(constellation, stars) {
             connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
+        // Add other constellations here
+
         default:
             break;
     }
@@ -131,49 +139,30 @@ function getConstellationConnections(constellation, stars) {
     return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
 
+// Endpunkt zum Generieren von Text basierend auf dem Sternzeichen
 app.post('/api/generate-text', async (req, res) => {
     const { starsign } = req.body;
 
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-
     try {
-        const response = await openaiClient.createChatCompletion({
-            model: 'gpt-4',
+        const response = await openaiClient.chat.completions.create({
+            model: 'gpt-4o',
             messages: [
                 {
                     role: 'system',
-                    content: `Gib mir eine spezifische und detaillierte Beschreibung in 100 Wörtern für das Sternzeichen ${starsign}. Die Beschreibung soll die Themen behandeln: Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, die historischen Hintergründe und Entdeckungsgeschichten, woher der Name kommt.`,
+                content: `Gib mir eine spezifische und detaillierte Beschreibung in 100 wörtern für das Sternzeichen ${starsign}. Die Beschreibung soll die themen behandeln Welche Sterne das Sternzeichen bilden, welcher der hellste und größte Stern ist, seit wann das Sternzeichen bekannt ist, die Histeroische Hintergründe und Entdeckungsgeschichten, woher der Name kommt `,
                 },
             ],
             max_tokens: 400,
-            stream: true,
         });
-
-        response.data.on('data', data => {
-            const lines = data.toString().split('\n').filter(line => line.trim() !== '');
-            for (const line of lines) {
-                const message = JSON.parse(line);
-                if (message.choices && message.choices[0].delta && message.choices[0].delta.content) {
-                    res.write(`data: ${message.choices[0].delta.content}\n\n`);
-                }
-            }
-        });
-
-        response.data.on('end', () => {
-            res.end();
-        });
-
+        res.json({ text: response.choices[0].message.content });
     } catch (error) {
         console.error('Fehler beim Generieren des Textes:', error);
-        res.status(500).send('Fehler bei der Textgenerierung.');
+        res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
     }
 });
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the Starbugs API!');
+    res.send(`Welcome to the Starbugs API! jetzt aber richtig!`);
 });
 
 app.listen(port, () => {
