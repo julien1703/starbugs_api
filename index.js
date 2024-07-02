@@ -121,7 +121,7 @@ function getConstellationConnections(constellation, stars) {
         case 'lyr':
             connections.push({ from: 'Vega', to: 'Sheliak' });
             connections.push({ from: 'Sheliak', to: 'Sulafat' });
-            connections.push({ from: 'Sulafat', to 'Delta2 Lyr' });
+            connections.push({ from: 'Sulafat', to: 'Delta2 Lyr' });
             connections.push({ from: 'Delta2 Lyr', to: 'Zeta2 Lyr' });
             break;
         default:
