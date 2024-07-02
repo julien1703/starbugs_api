@@ -162,13 +162,13 @@ app.post('/api/generate-text', async (req, res) => {
 });
 
 app.post('/api/chat', async (req, res) => {
-    const { message } = req.body;
+    const { message, starsign } = req.body;
 
     try {
         const response = await openaiClient.chat.completions.create({
-            model: 'gpt-4o',
+            model: 'gpt-4',
             messages: [
-                { role: 'system', content: `You are an expert on the constellation.`},
+                { role: 'system', content: `You are an expert on the constellation ${starsign}.`},
                 { role: 'user', content: message }
             ],
             max_tokens: 150,
@@ -179,6 +179,7 @@ app.post('/api/chat', async (req, res) => {
         res.status(500).json({ error: 'Fehler bei der Textgenerierung' });
     }
 });
+
 
 
 app.get('/', (req, res) => {
