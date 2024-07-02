@@ -139,11 +139,6 @@ function getConstellationConnections(constellation, stars) {
     return connections.filter(connection => starsMap[connection.from] && starsMap[connection.to]);
 }
 
-// Endpunkt zum Abrufen des API-Schlüssels
-app.get('/get-api-key', (req, res) => {
-    res.json({ apiKey: OpenAiKey });
-});
-
 // Endpunkt zum Generieren von Text basierend auf dem Sternzeichen
 app.post('/api/generate-text', async (req, res) => {
     const { starsign } = req.body;
